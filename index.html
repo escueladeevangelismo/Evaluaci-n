@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación de Presentaciones Evangelísticas</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C98C0A;
+    --gold-light: #FAEEDA;
+    --gold-dark: #854F0B;
+    --gold-mid: #BA7517;
+    --green-bg: #EAF3DE;
+    --green-text: #3B6D11;
+    --green-border: #639922;
+    --blue-bg: #E6F1FB;
+    --blue-text: #185FA5;
+    --amber-bg: #FAEEDA;
+    --amber-text: #854F0B;
+    --red-bg: #FCEBEB;
+    --red-text: #A32D2D;
+    --orange-bg: #FAECE7;
+    --orange-text: #993C1D;
+    --bg: #F5F3EF;
+    --surface: #FFFFFF;
+    --surface2: #F8F6F2;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.18);
+    --text: #1A1A1A;
+    --text-muted: #6B6560;
+    --text-hint: #9A948E;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    padding: 2.5rem 2rem 2rem;
+    margin-bottom: 2rem;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #C98C0A, #EF9F27, #C98C0A);
+  }
+  .header-icon {
+    width: 56px; height: 56px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 26px;
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: normal;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 1.25rem;
+  }
+  .scale-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .pill {
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .pill.gold { background: var(--gold-light); color: var(--gold-dark); border-color: rgba(201,140,10,0.3); }
+
+  /* ── Selectors ── */
+  .sel-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 1.75rem;
+  }
+  .field-group label {
+    display: block;
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
+  select, textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus, textarea:focus { border-color: var(--gold); }
+  textarea { resize: vertical; cursor: text; font-size: 13px; line-height: 1.5; }
+  .sel-wrapper { position: relative; }
+  .sel-arrow {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    pointer-events: none; color: var(--text-muted); font-size: 12px;
+  }
+
+  /* ── Section titles ── */
+  .sec-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 1.75rem 0 0.75rem;
+    font-size: 10px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .sec-title::after {
+    content: ''; flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Question cards ── */
+  .qcard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.6rem;
+    transition: box-shadow 0.15s;
+  }
+  .qcard:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .qcard.scored { border-left: 3px solid var(--gold); }
+  .qcard.auto-scored { border-left: 3px solid var(--green-border); }
+  .qcard.filled { border-left: 3px solid var(--gold); background: #FFFDF8; }
+
+  .q-header {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .q-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 24px; height: 24px;
+    background: var(--gold-light);
+    color: var(--gold-dark);
+    border-radius: 50%;
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .q-body { flex: 1; }
+  .q-text {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .q-pts {
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-hint);
+  }
+
+  /* ── Stars ── */
+  .stars-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .star {
+    font-size: 28px;
+    cursor: pointer;
+    color: #D8D0C4;
+    line-height: 1;
+    padding: 0 3px;
+    transition: color 0.1s, transform 0.1s;
+    user-select: none;
+  }
+  .star.lit { color: var(--gold); }
+  .star:hover { transform: scale(1.2); }
+  .star-info {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .star-desc {
+    font-size: 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .star-pts {
+    font-size: 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── Auto badge ── */
+  .auto-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--green-bg);
+    color: var(--green-text);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .no-match {
+    font-size: 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-hint);
+    font-style: italic;
+    margin-top: 6px;
+  }
+  .info-note {
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-hint);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* ── Yes/No buttons ── */
+  .yn-row { display: flex; gap: 8px; }
+  .yn-btn {
+    padding: 7px 28px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .yn-btn:hover { background: var(--surface); border-color: var(--gold); }
+  .yn-btn.sel-yes { background: var(--green-bg); color: var(--green-text); border-color: var(--green-border); font-weight: 600; }
+  .yn-btn.sel-no  { background: var(--red-bg);   color: var(--red-text);   border-color: #E24B4A; font-weight: 600; }
+
+  /* ── Score panel ── */
+  .score-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .score-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #C98C0A, #EF9F27, #C98C0A);
+  }
+  .score-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .score-label {
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .score-number {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .score-big {
+    font-size: 56px;
+    font-weight: normal;
+    color: var(--text);
+    line-height: 1;
+    font-family: 'Georgia', serif;
+  }
+  .score-denom {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-family: 'Georgia', serif;
+  }
+  .grade-badge {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .g-exc { background: var(--green-bg); color: var(--green-text); }
+  .g-bue { background: var(--blue-bg);  color: var(--blue-text);  }
+  .g-reg { background: var(--amber-bg); color: var(--amber-text); }
+  .g-mal { background: var(--orange-bg);color: var(--orange-text);}
+  .g-muy { background: var(--red-bg);   color: var(--red-text);   }
+
+  .pct-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .pct-bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .pct-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: var(--gold);
+    transition: width 0.4s ease, background 0.3s;
+  }
+  .pct-num {
+    font-size: 13px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 38px;
+    text-align: right;
+  }
+
+  /* ── Bars ── */
+  .bar-section {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 0.25rem;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .bar-lbl {
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-muted);
+    width: 160px;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+  .bar-val {
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    width: 34px;
+    text-align: right;
+  }
+
+  /* ── Q10 status ── */
+  .q10-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 0 0;
+    border-top: 1px solid var(--border);
+    margin-top: 6px;
+    font-size: 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-muted);
+  }
+  .q10-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #D8D0C4;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .q10-dot.pass { background: var(--green-border); }
+  .q10-dot.fail { background: #E24B4A; }
+
+  /* ── Buttons ── */
+  .copy-btn {
+    margin-top: 1.25rem;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--gold); }
+
+  .reset-btn {
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-hint);
+    transition: color 0.15s;
+  }
+  .reset-btn:hover { color: var(--red-text); }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    font-size: 11px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-hint);
+    font-style: italic;
+  }
+
+  @media (max-width: 480px) {
+    .sel-row { grid-template-columns: 1fr; }
+    .score-big { font-size: 44px; }
+    .bar-lbl { width: 120px; }
+  }
+
+  @media print {
+    body { background: white; padding: 1rem; }
+    .copy-btn, .reset-btn { display: none; }
+    .qcard:hover { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">✦</div>
+    <h1>Evaluación de Presentaciones Evangelísticas</h1>
+    <p>Carlos &amp; Carlos Bustamante — Kathryn Kuhlman</p>
+    <div class="scale-pills">
+      <span class="pill">10 preguntas puntuadas</span>
+      <span class="pill gold">★ = 0.20 pts</span>
+      <span class="pill gold">★★★★★ = 1.00 pt</span>
+      <span class="pill">Total máximo = 10</span>
+      <span class="pill">1 Muy malo · 3 Regular · 5 Excelente</span>
+    </div>
+  </div>
+
+  <!-- Selectors -->
+  <div class="sel-row">
+    <div class="field-group">
+      <label for="sel-evaluador">Instructor</label>
+      <div class="sel-wrapper">
+        <select id="sel-evaluador" onchange="onInstructorChange()">
+          <option value="">Seleccionar...</option>
+          <option>Kathryn Kuhlman</option>
+          <option>Billy Graham</option>
+          <option>Reinhard Bonnke</option>
+          <option>Carlos Anacondia</option>
+          <option>María Woodworth-Etter</option>
+          <option>Aimee Semple McPherson</option>
+        </select>
+        <span class="sel-arrow">▾</span>
+      </div>
+    </div>
+    <div class="field-group">
+      <label for="sel-estudiante">Estudiante</label>
+      <div class="sel-wrapper">
+        <select id="sel-estudiante">
+          <option value="">Seleccionar instructor primero...</option>
+        </select>
+        <span class="sel-arrow">▾</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 1 -->
+  <div class="sec-title">Presentación / Empatía</div>
+
+  <div class="qcard scored" id="card-1">
+    <div class="q-header">
+      <span class="q-num">1</span>
+      <div class="q-body">
+        <p class="q-text">¿La presentación fue atractiva, generó empatía y logró captar la atención?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="1" data-v="1">☆</span>
+      <span class="star" data-q="1" data-v="2">☆</span>
+      <span class="star" data-q="1" data-v="3">☆</span>
+      <span class="star" data-q="1" data-v="4">☆</span>
+      <span class="star" data-q="1" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-1">Sin calificar</span>
+        <span class="star-pts" id="pts-1"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="qcard scored" id="card-2">
+    <div class="q-header">
+      <span class="q-num">2</span>
+      <div class="q-body">
+        <p class="q-text">¿Conocía bien la historia y logró transmitirla con claridad?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="2" data-v="1">☆</span>
+      <span class="star" data-q="2" data-v="2">☆</span>
+      <span class="star" data-q="2" data-v="3">☆</span>
+      <span class="star" data-q="2" data-v="4">☆</span>
+      <span class="star" data-q="2" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-2">Sin calificar</span>
+        <span class="star-pts" id="pts-2"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="qcard scored" id="card-3">
+    <div class="q-header">
+      <span class="q-num">3</span>
+      <div class="q-body">
+        <p class="q-text">¿Teatralizó y utilizó gestos correctamente en los puntos clave de la historia?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="3" data-v="1">☆</span>
+      <span class="star" data-q="3" data-v="2">☆</span>
+      <span class="star" data-q="3" data-v="3">☆</span>
+      <span class="star" data-q="3" data-v="4">☆</span>
+      <span class="star" data-q="3" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-3">Sin calificar</span>
+        <span class="star-pts" id="pts-3"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 2 -->
+  <div class="sec-title">Historia &amp; Escritura</div>
+
+  <div class="qcard scored" id="card-q4">
+    <div class="q-header">
+      <span class="q-num">4</span>
+      <div class="q-body">
+        <p class="q-text">¿Qué historia contó?</p>
+        <p class="q-pts">1.00 pt automático si contó una de las historias válidas</p>
+      </div>
+    </div>
+    <div class="sel-wrapper" style="max-width:340px;">
+      <select id="q4-historia" onchange="onQ4Change()">
+        <option value="">Seleccionar historia...</option>
+        <option value="valid">El niño y la jaula</option>
+        <option value="valid">El niño y su barquito</option>
+        <option value="other">Otra historia</option>
+      </select>
+      <span class="sel-arrow">▾</span>
+    </div>
+    <div id="q4-result"></div>
+  </div>
+
+  <div class="qcard scored" id="card-5">
+    <div class="q-header">
+      <span class="q-num">5</span>
+      <div class="q-body">
+        <p class="q-text">¿Aplicó correctamente un versículo bíblico relacionado?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="5" data-v="1">☆</span>
+      <span class="star" data-q="5" data-v="2">☆</span>
+      <span class="star" data-q="5" data-v="3">☆</span>
+      <span class="star" data-q="5" data-v="4">☆</span>
+      <span class="star" data-q="5" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-5">Sin calificar</span>
+        <span class="star-pts" id="pts-5"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 3 -->
+  <div class="sec-title">Impacto &amp; Kerigma</div>
+
+  <div class="qcard scored" id="card-6">
+    <div class="q-header">
+      <span class="q-num">6</span>
+      <div class="q-body">
+        <p class="q-text">¿Logró llegar al corazón y generar impacto en las personas?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="6" data-v="1">☆</span>
+      <span class="star" data-q="6" data-v="2">☆</span>
+      <span class="star" data-q="6" data-v="3">☆</span>
+      <span class="star" data-q="6" data-v="4">☆</span>
+      <span class="star" data-q="6" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-6">Sin calificar</span>
+        <span class="star-pts" id="pts-6"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="qcard scored" id="card-7">
+    <div class="q-header">
+      <span class="q-num">7</span>
+      <div class="q-body">
+        <p class="q-text">¿Aplicó correctamente el Kerigma?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="7" data-v="1">☆</span>
+      <span class="star" data-q="7" data-v="2">☆</span>
+      <span class="star" data-q="7" data-v="3">☆</span>
+      <span class="star" data-q="7" data-v="4">☆</span>
+      <span class="star" data-q="7" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-7">Sin calificar</span>
+        <span class="star-pts" id="pts-7"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 4 -->
+  <div class="sec-title">Vocabulario &amp; Fe</div>
+
+  <div class="qcard scored" id="card-q8">
+    <div class="q-header">
+      <span class="q-num">8</span>
+      <div class="q-body">
+        <p class="q-text">Utilizó términos eclesiásticos (ej: "amén", "gloria a Dios", "aleluya"). ¿Cuáles usó?</p>
+        <p class="q-pts">1.00 pt automático si escribe algo</p>
+      </div>
+    </div>
+    <textarea id="q8-terminos" rows="2" placeholder="Escribir los términos usados..." oninput="onQ8Input()"></textarea>
+    <div id="q8-result"></div>
+  </div>
+
+  <div class="qcard scored" id="card-9">
+    <div class="q-header">
+      <span class="q-num">9</span>
+      <div class="q-body">
+        <p class="q-text">Oración de Fe: ¿La oración generó hambre, deseo y apertura hacia Jesús?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="9" data-v="1">☆</span>
+      <span class="star" data-q="9" data-v="2">☆</span>
+      <span class="star" data-q="9" data-v="3">☆</span>
+      <span class="star" data-q="9" data-v="4">☆</span>
+      <span class="star" data-q="9" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-9">Sin calificar</span>
+        <span class="star-pts" id="pts-9"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 5 -->
+  <div class="sec-title">Técnico &amp; Expresión</div>
+
+  <div class="qcard" id="card-10">
+    <div class="q-header">
+      <span class="q-num">10</span>
+      <div class="q-body">
+        <p class="q-text">Técnico: ¿Se mantuvo dentro del límite de tiempo establecido?</p>
+        <p class="q-pts">1.00 pt automático si cumplió el tiempo</p>
+      </div>
+    </div>
+    <div class="yn-row">
+      <button class="yn-btn" id="yn-si" onclick="setYN(true)">✓ Sí</button>
+      <button class="yn-btn" id="yn-no" onclick="setYN(false)">✗ No</button>
+    </div>
+    <div id="q10-result"></div>
+  </div>
+
+  <div class="qcard scored" id="card-11">
+    <div class="q-header">
+      <span class="q-num">11</span>
+      <div class="q-body">
+        <p class="q-text">¿Se expresó correctamente en general, utilizando bien las palabras y una buena gramática?</p>
+        <p class="q-pts">Hasta 1.00 pt</p>
+      </div>
+    </div>
+    <div class="stars-row">
+      <span class="star" data-q="11" data-v="1">☆</span>
+      <span class="star" data-q="11" data-v="2">☆</span>
+      <span class="star" data-q="11" data-v="3">☆</span>
+      <span class="star" data-q="11" data-v="4">☆</span>
+      <span class="star" data-q="11" data-v="5">☆</span>
+      <div class="star-info">
+        <span class="star-desc" id="desc-11">Sin calificar</span>
+        <span class="star-pts" id="pts-11"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comentario -->
+  <div class="sec-title">Comentario final</div>
+
+  <div class="qcard">
+    <div class="q-header">
+      <span class="q-num" style="background:#F0EDE8;color:#6B6560;font-size:14px;">✏</span>
+      <p class="q-text">Comentario sobre el estudiante</p>
+    </div>
+    <textarea id="q-comentario" rows="4" placeholder="Escribir retroalimentación constructiva..."></textarea>
+  </div>
+
+  <!-- Score Panel -->
+  <div class="score-panel">
+    <div class="score-top">
+      <div>
+        <p class="score-label">Puntaje final</p>
+        <div class="score-number">
+          <span class="score-big" id="score-total">0.00</span>
+          <span class="score-denom">/ 10</span>
+        </div>
+      </div>
+      <div>
+        <span class="grade-badge g-muy" id="grade-badge">Incompleto</span>
+      </div>
+    </div>
+
+    <div class="pct-row">
+      <div class="pct-bar-track">
+        <div class="pct-bar-fill" id="pct-bar" style="width:0%"></div>
+      </div>
+      <span class="pct-num" id="pct-lbl">0%</span>
+    </div>
+
+    <div class="bar-section" id="bars-section"></div>
+
+    <div class="q10-status">
+      <div class="q10-dot" id="q10-dot"></div>
+      <span id="q10-label">Q10 Tiempo: sin responder</span>
+    </div>
+
+    <button class="copy-btn" onclick="copySummary()">⧉ Copiar resumen de evaluación</button>
+    <button class="reset-btn" onclick="resetAll()">↺ Limpiar formulario</button>
+  </div>
+
+  <p class="footer">Escuela de Evangelistas · Carlos &amp; Carlos Bustamante · Kathryn Kuhlman</p>
+
+</div>
+
+<script>
+  const estudiantesPorComision = {
+    'Kathryn Kuhlman': ['Abregu Felisa','Arratia Teresa','María Elena Padilla','Erika Pérez','Norma Peve','Daniel Pezzoni','Laura Plaza','Myriam Rastelli','Stella Maris Rial','Daniel Rodríguez','Gabriela Ruiz','Juan Sagardia','Sandra Baquensay','Hilda Choque'],
+    'Billy Graham': ['Daniel Soto','Alexander Aldo Tolaba','Erica Urdininea','Lady Vásquez','Aydee Vega','Gabriel Vera','Jorge Verde','Camila Villagra','Guido Hernan Villagra','Priscila Villar Ruiz','Mauro Zalazar','Carlos Cocuzza','Valeria Fernandez','Alejandra Centurion'],
+    'Reinhard Bonnke': ['Cesar Lezcano','Loredana Jara','Roberto Maciel','Ana Maria Maidana','Angel Gregorio Maidana','Catalina Melgarejo','Enrique Marquez','Melani Medrano','Cristina Molina','Liliana Moron','Brisa Muniz','Magali Nardini','Gauna Juan','Bustamante Elias'],
+    'Carlos Anacondia': ['Adela Alanoca Alcon','Dafne Albañil','José María Aller','Isabel Andia Quispe','Gisell Andrusisen','Franco Antezana','Gabriel Arce','Carlos Ardiles','Luisa Báez','Juan Bazalar','Liliana Botte','Maria Teresa Cardozo Benitez','Alfredo Davila','Ponce Mónica'],
+    'María Woodworth-Etter': ['Fabian Chávez','Isabel Hilda Chuquimia','Geraldine Cordova','Noemi Cristaldo','Angélica Diaz','Natalia Dornell','Blanca Nieves Escalante','Anabella Esquivel','Agostina Falco','Hugo Figueredo','Mirta Alicia Franco','Héctor Rodolfo Gerez','Belen Lijou','Sandra Peñalba'],
+    'Aimee Semple McPherson': ['Viviana Giarretto','Gloria Gonzalez','Gustavo Fabian Gonzalez','Viviana González','Beatriz Gutierrez','Sandra Ibáñez','Isabel','Adriana Jonas','Alfredo Eduardo Juarez','Marisabel Laime','Adriana Nancy Lapponi','Laura Larramendi','Viviana De Prete','Condori Isabel'],
+  };
+
+  let instructorLocked = false;
+
+  function onInstructorChange() {
+    const com = document.getElementById('sel-evaluador').value;
+    const sel = document.getElementById('sel-estudiante');
+    sel.innerHTML = '<option value="">Seleccionar...</option>';
+    if (com && estudiantesPorComision[com]) {
+      estudiantesPorComision[com].forEach(nombre => {
+        const opt = document.createElement('option');
+        opt.textContent = nombre;
+        sel.appendChild(opt);
+      });
+    } else {
+      sel.innerHTML = '<option value="">Seleccionar instructor primero...</option>';
+    }
+  }
+
+  function lockInstructor() {
+    if (instructorLocked) return;
+    instructorLocked = true;
+    const selEv = document.getElementById('sel-evaluador');
+    selEv.disabled = true;
+    selEv.style.opacity = '0.7';
+    selEv.style.cursor = 'default';
+    // Show lock indicator
+    const label = document.querySelector('label[for="sel-evaluador"]');
+    if (label && !label.querySelector('.lock-icon')) {
+      const icon = document.createElement('span');
+      icon.className = 'lock-icon';
+      icon.textContent = ' 🔒';
+      icon.style.fontSize = '10px';
+      label.appendChild(icon);
+    }
+  }
+
+  
+  const autoScores = {4:0,8:0,10:0};
+  const q10val = {v:null};
+  const descs = ['','Muy malo','Malo','Regular','Bueno','Excelente'];
+  const MAX_RAW = 55;
+  const PPS = 10 / MAX_RAW; // points per star raw
+
+  const qLabels = [
+    [1,'Presentación/Empatía',false],
+    [2,'Claridad historia',false],
+    [3,'Teatralización/Gestos',false],
+    [4,'Historia contada',true],
+    [5,'Versículo bíblico',false],
+    [6,'Impacto corazón',false],
+    [7,'Kerigma',false],
+    [8,'Términos eclesiásticos',true],
+    [9,'Oración de Fe',false],
+    [10,'Tiempo cumplido',true],
+    [11,'Gramática/Expresión',false],
+  ];
+
+  // Stars
+  document.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('click', () => {
+      const q = parseInt(star.dataset.q), v = parseInt(star.dataset.v);
+      scores[q] = v;
+      renderStars(q, v);
+      updateScore();
+    });
+    star.addEventListener('mouseenter', () => hoverStars(parseInt(star.dataset.q), parseInt(star.dataset.v)));
+    star.addEventListener('mouseleave', () => renderStars(parseInt(star.dataset.q), scores[parseInt(star.dataset.q)]));
+  });
+
+  function renderStars(q, v) {
+    document.querySelectorAll(`.star[data-q="${q}"]`).forEach(s => {
+      const sv = parseInt(s.dataset.v);
+      s.textContent = sv <= v ? '★' : '☆';
+      s.classList.toggle('lit', sv <= v);
+      s.style.color = '';
+    });
+    const desc = document.getElementById(`desc-${q}`);
+    const pts  = document.getElementById(`pts-${q}`);
+    if (desc) desc.textContent = v > 0 ? descs[v] : 'Sin calificar';
+    if (pts)  pts.textContent  = v > 0 ? `+${(v*PPS).toFixed(2)} pts` : '';
+  }
+
+  function hoverStars(q, v) {
+    document.querySelectorAll(`.star[data-q="${q}"]`).forEach(s => {
+      const sv = parseInt(s.dataset.v);
+      s.textContent = sv <= v ? '★' : '☆';
+      s.style.color = sv <= v ? 'var(--gold)' : '';
+    });
+    const desc = document.getElementById(`desc-${q}`);
+    const pts  = document.getElementById(`pts-${q}`);
+    if (desc) desc.textContent = descs[v];
+    if (pts)  pts.textContent  = `+${(v*PPS).toFixed(2)} pts`;
+  }
+
+  // Q4 — Historia
+  function onQ4Change() {
+    const sel = document.getElementById('q4-historia');
+    const valid = sel.value === 'valid';
+    autoScores[4] = valid ? 5 : 0;
+    const card = document.getElementById('card-q4');
+    const res  = document.getElementById('q4-result');
+    card.className = 'qcard ' + (valid ? 'auto-scored' : 'scored');
+    if (sel.value === 'valid') {
+      res.innerHTML = `<div class="auto-badge">✔ Historia válida — +1.00 pt automático</div>`;
+    } else if (sel.value === 'other') {
+      res.innerHTML = `<p class="no-match">Historia no incluida en las historias válidas — 0 pts</p>`;
+    } else {
+      res.innerHTML = '';
+    }
+    updateScore();
+  }
+
+  // Q8 — Términos
+  function onQ8Input() {
+    const txt = document.getElementById('q8-terminos').value.trim();
+    const has = txt.length > 0;
+    autoScores[8] = has ? 5 : 0;
+    const card = document.getElementById('card-q8');
+    const res  = document.getElementById('q8-result');
+    card.className = 'qcard ' + (has ? 'auto-scored' : 'scored');
+    res.innerHTML = has
+      ? `<div class="auto-badge" style="margin-top:8px">✔ Términos registrados — +1.00 pt automático</div>`
+      : '';
+    updateScore();
+  }
+
+  // Q10
+  function setYN(val) {
+    q10val.v = val;
+    document.getElementById('yn-si').className = 'yn-btn' + (val  ? ' sel-yes' : '');
+    document.getElementById('yn-no').className = 'yn-btn' + (!val ? ' sel-no'  : '');
+    autoScores[10] = val ? 5 : 0;
+    const card = document.getElementById('card-10');
+    const res  = document.getElementById('q10-result');
+    card.className = 'qcard ' + (val ? 'auto-scored' : 'scored');
+    if (val === true) {
+      res.innerHTML = `<div class="auto-badge" style="margin-top:8px">✔ Tiempo cumplido — +1.00 pt automático</div>`;
+    } else if (val === false) {
+      res.innerHTML = `<p class="no-match" style="margin-top:6px">Tiempo no cumplido — 0 pts</p>`;
+    } else {
+      res.innerHTML = '';
+    }
+    updateScore();
+  }
+
+  // Score
+  function updateScore() {
+    let raw = 0;
+    Object.values(scores).forEach(v => raw += v);
+    raw += autoScores[4] + autoScores[8] + autoScores[10];
+
+    const score10 = (raw * PPS).toFixed(2);
+    const pct = Math.round(raw / MAX_RAW * 100);
+
+    document.getElementById('score-total').textContent = score10;
+    document.getElementById('pct-bar').style.width = pct + '%';
+    document.getElementById('pct-lbl').textContent = pct + '%';
+
+    let grade, cls, color;
+    if (raw === 0)   { grade='Incompleto'; cls='g-muy'; color='#C98C0A'; }
+    else if(pct>=91) { grade='Excelente';  cls='g-exc'; color='#639922'; }
+    else if(pct>=75) { grade='Bueno';      cls='g-bue'; color='#378ADD'; }
+    else if(pct>=60) { grade='Regular';    cls='g-reg'; color='#BA7517'; }
+    else if(pct>=40) { grade='Malo';       cls='g-mal'; color='#993C1D'; }
+    else             { grade='Muy malo';   cls='g-muy'; color='#A32D2D'; }
+
+    document.getElementById('grade-badge').textContent = grade;
+    document.getElementById('grade-badge').className = 'grade-badge ' + cls;
+    document.getElementById('pct-bar').style.background = color;
+
+    // Bars
+    document.getElementById('bars-section').innerHTML = qLabels.map(([q,lbl,isAuto]) => {
+      const v = isAuto ? autoScores[q] : scores[q];
+      const w = Math.round(v / 5 * 100);
+      const fc = isAuto && v === 5 ? '#639922' : '#C98C0A';
+      return `<div class="bar-row">
+        <span class="bar-lbl">${lbl}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${w}%;background:${fc}"></div></div>
+        <span class="bar-val">${v > 0 ? (v*PPS).toFixed(2) : '—'}</span>
+      </div>`;
+    }).join('');
+
+    // Q10 dot
+    const dot = document.getElementById('q10-dot');
+    const lbl = document.getElementById('q10-label');
+    if (q10val.v === true)  { dot.className='q10-dot pass'; lbl.textContent='Q10 Tiempo: cumplido +1.00 pt ✓'; }
+    else if(q10val.v===false){ dot.className='q10-dot fail'; lbl.textContent='Q10 Tiempo: no cumplido — 0 pts ✗'; }
+    else { dot.className='q10-dot'; lbl.textContent='Q10 Tiempo: sin responder'; }
+  }
+
+  // Copy
+  function copySummary() {
+    const est  = document.getElementById('sel-estudiante').value || '(no seleccionado)';
+    const ev   = document.getElementById('sel-evaluador').value  || '(no seleccionado)';
+    const score= document.getElementById('score-total').textContent;
+    const grade= document.getElementById('grade-badge').textContent;
+    const selH = document.getElementById('q4-historia');
+    const hist = selH.options[selH.selectedIndex]?.text || '—';
+    const term = document.getElementById('q8-terminos').value;
+    const comt  = document.getElementById('q-comentario').value;
+
+    let text = `EVALUACIÓN DE PRESENTACIÓN EVANGELÍSTICA\n`;
+    text += `==========================================\n`;
+    text += `Estudiante : ${est}\nInstructor : ${ev}\nHistoria   : ${hist}\n\n`;
+    text += `PUNTAJES (★ = 0.20 pts · máx. 1.00 pt por pregunta):\n`;
+    qLabels.forEach(([q, lbl, isAuto]) => {
+      const v = isAuto ? autoScores[q] : scores[q];
+      const p = (v * PPS).toFixed(2);
+      const tag = isAuto ? (v===5?'[automático]':'[no aplica]') : (v>0?descs[v]:'Sin calificar');
+      text += `  [Q${q}] ${lbl}: ${v>0?v+'/5 = '+p+' pts':'0 pts'} ${tag}\n`;
+    });
+    text += `\n  [Q10] Tiempo: ${q10val.v===null?'Sin responder':q10val.v?'Cumplido +1.00 pt ✓':'No cumplido — 0 pts ✗'}\n`;
+    text += `\nRESULTADO FINAL: ${score} / 10 — ${grade}\n`;
+    if (term) text += `\nTérminos eclesiásticos: ${term}\n`;
+    if (comt)  text += `\nComentario: ${comt}\n`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      lockInstructor();
+      const btn = document.querySelector('.copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = '✔ Copiado correctamente';
+      btn.style.color = 'var(--green-text)';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.color = '';
+        resetForNextStudent();
+      }, 1500);
+    });
+  }
+
+  // Reset solo campos del estudiante (mantiene instructor bloqueado)
+  function resetForNextStudent() {
+    Object.keys(scores).forEach(k => scores[k] = 0);
+    autoScores[4] = 0; autoScores[8] = 0; autoScores[10] = 0; q10val.v = null;
+    document.querySelectorAll('.star').forEach(s => { s.textContent='☆'; s.classList.remove('lit'); s.style.color=''; });
+    document.querySelectorAll('[id^="desc-"]').forEach(el => el.textContent = 'Sin calificar');
+    document.querySelectorAll('[id^="pts-"]').forEach(el => el.textContent = '');
+    document.getElementById('sel-estudiante').value = '';
+    document.getElementById('q4-historia').value = '';
+    document.getElementById('q4-result').innerHTML = '';
+    document.getElementById('q8-terminos').value = '';
+    document.getElementById('q8-result').innerHTML = '';
+    document.getElementById('q10-result').innerHTML = '';
+    document.getElementById('q-comentario').value = '';
+    document.getElementById('yn-si').className = 'yn-btn';
+    document.getElementById('yn-no').className = 'yn-btn';
+    document.querySelectorAll('.qcard').forEach(c => {
+      if (c.id === 'card-q4' || c.id === 'card-q8' || c.id === 'card-10') c.className = 'qcard scored';
+    });
+    updateScore();
+  }
+
+  // Reset completo (desbloquea instructor también)
+  function resetAll() {
+    if (!confirm('¿Limpiar todo el formulario y desbloquear el instructor?')) return;
+    instructorLocked = false;
+    const selEv = document.getElementById('sel-evaluador');
+    selEv.disabled = false;
+    selEv.style.opacity = '';
+    selEv.style.cursor = '';
+    selEv.value = '';
+    const lockIcon = document.querySelector('label[for="sel-evaluador"] .lock-icon');
+    if (lockIcon) lockIcon.remove();
+    document.getElementById('sel-estudiante').innerHTML = '<option value="">Seleccionar instructor primero...</option>';
+    Object.keys(scores).forEach(k => scores[k] = 0);
+    autoScores[4] = 0; autoScores[8] = 0; autoScores[10] = 0; q10val.v = null;
+    document.querySelectorAll('.star').forEach(s => { s.textContent='☆'; s.classList.remove('lit'); s.style.color=''; });
+    document.querySelectorAll('[id^="desc-"]').forEach(el => el.textContent = 'Sin calificar');
+    document.querySelectorAll('[id^="pts-"]').forEach(el => el.textContent = '');
+    document.getElementById('q4-historia').value = '';
+    document.getElementById('q4-result').innerHTML = '';
+    document.getElementById('q8-terminos').value = '';
+    document.getElementById('q8-result').innerHTML = '';
+    document.getElementById('q10-result').innerHTML = '';
+    document.getElementById('q-comentario').value = '';
+    document.getElementById('yn-si').className = 'yn-btn';
+    document.getElementById('yn-no').className = 'yn-btn';
+    document.querySelectorAll('.qcard').forEach(c => {
+      if (c.id === 'card-q4' || c.id === 'card-q8' || c.id === 'card-10') c.className = 'qcard scored';
+    });
+    updateScore();
+  }
+
+  updateScore();
+</script>
+</body>
+</html>
