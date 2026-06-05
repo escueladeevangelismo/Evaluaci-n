@@ -876,6 +876,7 @@
   }
 
   
+  const scores = {1:0,2:0,3:0,5:0,6:0,7:0,9:0,11:0};
   const autoScores = {4:0,8:0,10:0};
   const q10val = {v:null};
   const descs = ['','Muy malo','Malo','Regular','Bueno','Excelente'];
@@ -1112,7 +1113,8 @@
 
     fetch('https://api.sheetbest.com/sheets/966bd687-ba22-4e9c-8c8f-382bd001341a', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     })
     .then(r => {
