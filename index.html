@@ -493,6 +493,88 @@
     font-style: italic;
   }
 
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  }
+  .modal h3 { font-size: 16px; margin-bottom: 1rem; color: var(--text); }
+  .modal-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .modal-row:last-of-type { border-bottom: none; }
+  .modal-row span:first-child { color: var(--text-muted); }
+  .modal-row span:last-child { font-weight: 600; }
+  .modal-score { font-size: 28px; font-weight: 700; color: var(--gold-dark); text-align: center; margin: 1rem 0 0.25rem; }
+  .modal-grade { text-align: center; margin-bottom: 1rem; }
+  .modal-btns { display: flex; gap: 8px; margin-top: 1.2rem; }
+  .modal-btns button { flex: 1; padding: 10px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-size: 13px; font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 600; }
+  .btn-cancel { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border) !important; }
+  .btn-confirm { background: #1a7a2e; color: #fff; }
+
+  /* ── Vista panel ── */
+  .vista-toggle {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--blue-text);
+    font-weight: 600;
+  }
+  .vista-panel {
+    display: none;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .vista-panel.open { display: block; }
+  .vista-header {
+    padding: 1rem 1.2rem;
+    background: var(--blue-bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .vista-header h3 { font-size: 14px; color: var(--blue-text); }
+  .vista-table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'Helvetica Neue', Arial, sans-serif; }
+  .vista-table th { background: var(--surface2); padding: 8px 10px; text-align: left; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  .vista-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .vista-table tr:last-child td { border-bottom: none; }
+  .vista-table tr:hover td { background: var(--surface2); }
+  .badge-score { display: inline-block; padding: 2px 8px; border-radius: 20px; font-weight: 700; font-size: 12px; }
+  .vista-actions { display: flex; gap: 6px; }
+  .btn-anular { padding: 3px 8px; border-radius: 4px; border: 1px solid var(--red-text); background: var(--red-bg); color: var(--red-text); cursor: pointer; font-size: 11px; }
+  .vista-empty { padding: 2rem; text-align: center; color: var(--text-hint); font-size: 13px; font-family: 'Helvetica Neue', Arial, sans-serif; }
+  .vista-promedio { padding: 0.8rem 1.2rem; background: var(--gold-light); border-top: 1px solid var(--border); font-size: 13px; font-family: 'Helvetica Neue', Arial, sans-serif; display: flex; flex-wrap: wrap; gap: 8px; }
+  .prom-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 12px; }
+  .prom-chip strong { color: var(--gold-dark); }
+
+  /* ── Send btn disabled ── */
+  .send-btn { background: #1a7a2e; color: #fff; margin-top: 6px; }
+  .send-btn:disabled { background: #ccc !important; color: #888 !important; cursor: not-allowed; }
+  .incomplete-hint { font-size: 11px; color: var(--text-hint); text-align: center; margin-top: 4px; font-family: 'Helvetica Neue', Arial, sans-serif; display: none; }
+
   @media (max-width: 480px) {
     .sel-row { grid-template-columns: 1fr; }
     .score-big { font-size: 44px; }
@@ -822,12 +904,36 @@
     </div>
 
     <button class="copy-btn" onclick="copySummary()">⧉ Copiar resumen de evaluación</button>
-    <button class="copy-btn" style="background:var(--accent,#4A90D9);color:#fff;margin-top:6px;" onclick="enviarEvaluacion()">✈ Enviar evaluación</button>
+    <button class="copy-btn send-btn" id="btn-enviar" onclick="confirmarEnvio()">✈ Enviar evaluación</button>
+    <p class="incomplete-hint" id="incomplete-hint">Completá todas las preguntas para poder enviar</p>
     <button class="reset-btn" onclick="resetAll()">↺ Limpiar formulario</button>
+  </div>
+
+  <!-- Vista de evaluaciones -->
+  <button class="vista-toggle" onclick="toggleVista()">📋 Ver evaluaciones enviadas</button>
+  <div class="vista-panel" id="vista-panel">
+    <div class="vista-header">
+      <h3>Evaluaciones enviadas</h3>
+      <span id="vista-count" style="font-size:12px;color:var(--blue-text);"></span>
+    </div>
+    <div id="vista-body"></div>
+    <div class="vista-promedio" id="vista-promedios"></div>
   </div>
 
   <p class="footer">Escuela de Evangelistas · Carlos &amp; Carlos Bustamante · Kathryn Kuhlman</p>
 
+</div>
+
+<!-- Modal confirmación -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal">
+    <h3>¿Confirmar envío?</h3>
+    <div id="modal-content"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="enviarConfirmado()">✈ Enviar</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -852,9 +958,11 @@
         opt.textContent = nombre;
         sel.appendChild(opt);
       });
+      localStorage.setItem('ultimo_instructor', com);
     } else {
       sel.innerHTML = '<option value="">Seleccionar instructor primero...</option>';
     }
+    checkEnviarBtn();
   }
 
   function lockInstructor() {
@@ -1028,6 +1136,8 @@
     if (q10val.v === true)  { dot.className='q10-dot pass'; lbl.textContent='Q10 Tiempo: cumplido +1.00 pt ✓'; }
     else if(q10val.v===false){ dot.className='q10-dot fail'; lbl.textContent='Q10 Tiempo: no cumplido — 0 pts ✗'; }
     else { dot.className='q10-dot'; lbl.textContent='Q10 Tiempo: sin responder'; }
+
+    checkEnviarBtn();
   }
 
   // Copy
@@ -1065,15 +1175,134 @@
     });
   }
 
-  // Enviar evaluación a Google Sheet
-  function enviarEvaluacion() {
+  // ── Chequear si el formulario está completo ──
+  function checkEnviarBtn() {
+    const est = document.getElementById('sel-estudiante').value;
+    const ev  = document.getElementById('sel-evaluador').value;
+    const allStarsDone = [1,2,3,5,6,7,9,11].every(q => scores[q] > 0);
+    const q4done  = autoScores[4] > 0;
+    const q8done  = autoScores[8] > 0;
+    const q10done = q10val.v !== null;
+    const complete = est && ev && allStarsDone && q4done && q8done && q10done;
+    const btn = document.getElementById('btn-enviar');
+    const hint = document.getElementById('incomplete-hint');
+    btn.disabled = !complete;
+    hint.style.display = complete ? 'none' : 'block';
+  }
+
+  // ── Modal confirmación ──
+  function confirmarEnvio() {
     const est   = document.getElementById('sel-estudiante').value;
-    const ev    = document.getElementById('sel-evaluador').value;
-    if (!est || !ev) {
-      alert('Seleccioná instructor y estudiante antes de enviar.');
+    const score = document.getElementById('score-total').textContent;
+    const grade = document.getElementById('grade-badge').textContent;
+    const selH  = document.getElementById('q4-historia');
+    const hist  = selH.options[selH.selectedIndex]?.text || '—';
+    document.getElementById('modal-content').innerHTML = `
+      <div class="modal-score">${score} / 10</div>
+      <div class="modal-grade"><span class="grade-badge">${grade}</span></div>
+      <div class="modal-row"><span>Estudiante</span><span>${est}</span></div>
+      <div class="modal-row"><span>Historia</span><span>${hist}</span></div>
+      <div class="modal-row"><span>Tiempo</span><span>${q10val.v ? 'Cumplido ✓' : 'No cumplido ✗'}</span></div>
+    `;
+    document.getElementById('modal-confirm').classList.add('open');
+  }
+  function cerrarModal() {
+    document.getElementById('modal-confirm').classList.remove('open');
+  }
+  function enviarConfirmado() {
+    cerrarModal();
+    enviarEvaluacion();
+  }
+
+  // ── Evaluaciones locales ──
+  let evaluaciones = JSON.parse(localStorage.getItem('evaluaciones') || '[]');
+
+  function guardarEvaluacionLocal(payload) {
+    payload._id = Date.now();
+    evaluaciones.push(payload);
+    localStorage.setItem('evaluaciones', JSON.stringify(evaluaciones));
+    renderVista();
+  }
+
+  function anularEvaluacion(id) {
+    if (!confirm('¿Anular esta evaluación? Se eliminará de la vista local.')) return;
+    evaluaciones = evaluaciones.filter(e => e._id !== id);
+    localStorage.setItem('evaluaciones', JSON.stringify(evaluaciones));
+    renderVista();
+  }
+
+  function toggleVista() {
+    const panel = document.getElementById('vista-panel');
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open')) renderVista();
+  }
+
+  function scoreColor(s) {
+    const n = parseFloat(s);
+    if (n >= 9) return '#1a7a2e';
+    if (n >= 7) return '#2e6fa8';
+    if (n >= 5) return '#8a6d00';
+    return '#a32d2d';
+  }
+  function scoreBg(s) {
+    const n = parseFloat(s);
+    if (n >= 9) return '#eaf3de';
+    if (n >= 7) return '#e6f1fb';
+    if (n >= 5) return '#faeeda';
+    return '#fcebeb';
+  }
+
+  function renderVista() {
+    const body   = document.getElementById('vista-body');
+    const count  = document.getElementById('vista-count');
+    const promsEl= document.getElementById('vista-promedios');
+    const inst   = document.getElementById('sel-evaluador').value;
+    const lista  = inst ? evaluaciones.filter(e => e.Instructor === inst) : evaluaciones;
+
+    count.textContent = lista.length + ' registro' + (lista.length !== 1 ? 's' : '');
+
+    if (lista.length === 0) {
+      body.innerHTML = '<div class="vista-empty">No hay evaluaciones registradas aún.</div>';
+      promsEl.innerHTML = '';
       return;
     }
 
+    // Tabla
+    let html = `<div style="overflow-x:auto"><table class="vista-table">
+      <thead><tr><th>Estudiante</th><th>Puntaje</th><th>Calif.</th><th>Fecha</th><th></th></tr></thead><tbody>`;
+    lista.slice().reverse().forEach(e => {
+      const color = scoreColor(e.Puntaje_Final);
+      const bg    = scoreBg(e.Puntaje_Final);
+      html += `<tr>
+        <td>${e.Estudiante}</td>
+        <td><span class="badge-score" style="color:${color};background:${bg}">${e.Puntaje_Final}</span></td>
+        <td style="font-size:11px">${e.Calificacion}</td>
+        <td style="font-size:11px;color:var(--text-hint)">${e.Fecha?.split(',')[0] || '—'}</td>
+        <td><div class="vista-actions"><button class="btn-anular" onclick="anularEvaluacion(${e._id})">✖ Anular</button></div></td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+    body.innerHTML = html;
+
+    // Promedios por estudiante
+    const porEst = {};
+    lista.forEach(e => {
+      if (!porEst[e.Estudiante]) porEst[e.Estudiante] = [];
+      porEst[e.Estudiante].push(parseFloat(e.Puntaje_Final));
+    });
+    const chips = Object.entries(porEst).map(([nom, arr]) => {
+      const avg = (arr.reduce((a,b) => a+b, 0) / arr.length).toFixed(2);
+      return `<span class="prom-chip">${nom}: <strong>${avg}</strong>${arr.length > 1 ? ` (${arr.length} eval.)` : ''}</span>`;
+    }).join('');
+    promsEl.innerHTML = chips
+      ? `<span style="font-size:11px;color:var(--text-muted);margin-right:4px">Promedios:</span>` + chips
+      : '';
+  }
+
+  // ── Enviar evaluación a Google Sheet ──
+  function enviarEvaluacion() {
+    const est   = document.getElementById('sel-estudiante').value;
+    const ev    = document.getElementById('sel-evaluador').value;
     const selH  = document.getElementById('q4-historia');
     const hist  = selH.options[selH.selectedIndex]?.text || '';
     const term  = document.getElementById('q8-terminos').value || '';
@@ -1086,10 +1315,7 @@
     [1,2,3,5,6,7,9,11].forEach(q => { qPts['Q'+q] = (scores[q] * PPS).toFixed(2); });
 
     const payload = {
-      Fecha:             ahora,
-      Instructor:        ev,
-      Estudiante:        est,
-      Historia:          hist,
+      Fecha: ahora, Instructor: ev, Estudiante: est, Historia: hist,
       Q1_Presentacion:   qPts['Q1'],
       Q2_Claridad:       qPts['Q2'],
       Q3_Teatralizacion: qPts['Q3'],
@@ -1101,13 +1327,11 @@
       Q9_Oracion:        qPts['Q9'],
       Q10_Tiempo:        q10val.v === true ? '1.00' : '0.00',
       Q11_Gramatica:     qPts['Q11'],
-      Puntaje_Final:     score,
-      Calificacion:      grade,
-      Terminos_Usados:   term,
-      Comentario:        comt,
+      Puntaje_Final: score, Calificacion: grade,
+      Terminos_Usados: term, Comentario: comt,
     };
 
-    const btn = document.querySelectorAll('.copy-btn')[1];
+    const btn = document.getElementById('btn-enviar');
     btn.textContent = '⏳ Enviando...';
     btn.disabled = true;
 
@@ -1118,6 +1342,7 @@
       body: JSON.stringify(payload)
     })
     .then(() => {
+      guardarEvaluacionLocal(payload);
       lockInstructor();
       btn.textContent = '✔ Enviado correctamente';
       btn.style.background = '#2e7d32';
@@ -1135,6 +1360,7 @@
       setTimeout(() => {
         btn.textContent = '✈ Enviar evaluación';
         btn.style.background = '';
+        checkEnviarBtn();
       }, 3000);
     });
   }
@@ -1193,6 +1419,19 @@
   }
 
   updateScore();
+
+  // Restaurar último instructor al cargar
+  const ultimoInstructor = localStorage.getItem('ultimo_instructor');
+  if (ultimoInstructor) {
+    const selEv = document.getElementById('sel-evaluador');
+    selEv.value = ultimoInstructor;
+    onInstructorChange();
+  }
+
+  // Chequear enviar al cambiar estudiante
+  document.getElementById('sel-estudiante').addEventListener('change', checkEnviarBtn);
+
+  checkEnviarBtn();
 </script>
 </body>
 </html>
