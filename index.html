@@ -1056,6 +1056,7 @@
 
     navigator.clipboard.writeText(text).then(() => {
       lockInstructor();
+      sendToSheet();
       const btn = document.querySelector('.copy-btn');
       const orig = btn.textContent;
       btn.textContent = '✔ Copiado correctamente';
@@ -1066,6 +1067,52 @@
         resetForNextStudent();
       }, 1500);
     });
+  }
+
+  // Enviar datos a Google Sheet via SheetBest
+  function sendToSheet() {
+    const est   = document.getElementById('sel-estudiante').value || '';
+    const ev    = document.getElementById('sel-evaluador').value  || '';
+    const selH  = document.getElementById('q4-historia');
+    const hist  = selH.options[selH.selectedIndex]?.text || '';
+    const term  = document.getElementById('q8-terminos').value || '';
+    const comt  = document.getElementById('q-comentario').value || '';
+    const score = document.getElementById('score-total').textContent || '';
+    const grade = document.getElementById('grade-badge').textContent || '';
+    const ahora = new Date().toLocaleString('es-AR', {timeZone:'America/Argentina/Buenos_Aires'});
+
+    const qPts = {};
+    [1,2,3,5,6,7,9,11].forEach(q => {
+      qPts['Q'+q] = (scores[q] * PPS).toFixed(2);
+    });
+
+    const payload = {
+      Fecha:        ahora,
+      Instructor:   ev,
+      Estudiante:   est,
+      Historia:     hist,
+      Q1_Presentacion:   qPts['Q1'],
+      Q2_Claridad:       qPts['Q2'],
+      Q3_Teatralizacion: qPts['Q3'],
+      Q4_Historia:       (autoScores[4] * PPS).toFixed(2),
+      Q5_Versiculo:      qPts['Q5'],
+      Q6_Impacto:        qPts['Q6'],
+      Q7_Kerigma:        qPts['Q7'],
+      Q8_Terminos:       (autoScores[8] * PPS).toFixed(2),
+      Q9_Oracion:        qPts['Q9'],
+      Q10_Tiempo:        q10val.v === true ? '1.00' : '0.00',
+      Q11_Gramatica:     qPts['Q11'],
+      Puntaje_Final:     score,
+      Calificacion:      grade,
+      Terminos_Usados:   term,
+      Comentario:        comt,
+    };
+
+    fetch('https://api.sheetbest.com/sheets/966bd687-ba22-4e9c-8c8f-382bd001341a', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(err => console.warn('SheetBest error:', err));
   }
 
   // Reset solo campos del estudiante (mantiene instructor bloqueado)
