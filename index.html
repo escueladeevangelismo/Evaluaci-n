@@ -822,6 +822,7 @@
     </div>
 
     <button class="copy-btn" onclick="copySummary()">⧉ Copiar resumen de evaluación</button>
+    <button class="copy-btn" style="background:var(--accent,#4A90D9);color:#fff;margin-top:6px;" onclick="enviarEvaluacion()">✈ Enviar evaluación</button>
     <button class="reset-btn" onclick="resetAll()">↺ Limpiar formulario</button>
   </div>
 
@@ -1055,24 +1056,23 @@
     if (comt)  text += `\nComentario: ${comt}\n`;
 
     navigator.clipboard.writeText(text).then(() => {
-      lockInstructor();
-      sendToSheet();
       const btn = document.querySelector('.copy-btn');
       const orig = btn.textContent;
-      btn.textContent = '✔ Copiado correctamente';
+      btn.textContent = '✔ Copiado';
       btn.style.color = 'var(--green-text)';
-      setTimeout(() => {
-        btn.textContent = orig;
-        btn.style.color = '';
-        resetForNextStudent();
-      }, 1500);
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
     });
   }
 
-  // Enviar datos a Google Sheet via SheetBest
-  function sendToSheet() {
-    const est   = document.getElementById('sel-estudiante').value || '';
-    const ev    = document.getElementById('sel-evaluador').value  || '';
+  // Enviar evaluación a Google Sheet
+  function enviarEvaluacion() {
+    const est   = document.getElementById('sel-estudiante').value;
+    const ev    = document.getElementById('sel-evaluador').value;
+    if (!est || !ev) {
+      alert('Seleccioná instructor y estudiante antes de enviar.');
+      return;
+    }
+
     const selH  = document.getElementById('q4-historia');
     const hist  = selH.options[selH.selectedIndex]?.text || '';
     const term  = document.getElementById('q8-terminos').value || '';
@@ -1082,15 +1082,13 @@
     const ahora = new Date().toLocaleString('es-AR', {timeZone:'America/Argentina/Buenos_Aires'});
 
     const qPts = {};
-    [1,2,3,5,6,7,9,11].forEach(q => {
-      qPts['Q'+q] = (scores[q] * PPS).toFixed(2);
-    });
+    [1,2,3,5,6,7,9,11].forEach(q => { qPts['Q'+q] = (scores[q] * PPS).toFixed(2); });
 
     const payload = {
-      Fecha:        ahora,
-      Instructor:   ev,
-      Estudiante:   est,
-      Historia:     hist,
+      Fecha:             ahora,
+      Instructor:        ev,
+      Estudiante:        est,
+      Historia:          hist,
       Q1_Presentacion:   qPts['Q1'],
       Q2_Claridad:       qPts['Q2'],
       Q3_Teatralizacion: qPts['Q3'],
@@ -1108,11 +1106,36 @@
       Comentario:        comt,
     };
 
+    const btn = document.querySelectorAll('.copy-btn')[1];
+    btn.textContent = '⏳ Enviando...';
+    btn.disabled = true;
+
     fetch('https://api.sheetbest.com/sheets/966bd687-ba22-4e9c-8c8f-382bd001341a', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    }).catch(err => console.warn('SheetBest error:', err));
+    })
+    .then(r => {
+      if (!r.ok) throw new Error('Error ' + r.status);
+      lockInstructor();
+      btn.textContent = '✔ Enviado correctamente';
+      btn.style.background = '#2e7d32';
+      setTimeout(() => {
+        btn.textContent = '✈ Enviar evaluación';
+        btn.style.background = '';
+        btn.disabled = false;
+        resetForNextStudent();
+      }, 1800);
+    })
+    .catch(() => {
+      btn.textContent = '✖ Error al enviar — reintentá';
+      btn.style.background = '#c62828';
+      btn.disabled = false;
+      setTimeout(() => {
+        btn.textContent = '✈ Enviar evaluación';
+        btn.style.background = '';
+      }, 3000);
+    });
   }
 
   // Reset solo campos del estudiante (mantiene instructor bloqueado)
